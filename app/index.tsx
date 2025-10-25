@@ -7,9 +7,9 @@ import AddWalletModal from "@/components/ui/add-wallet-modal";
 import { Colors } from "@/constants/theme";
 import { useDatabaseContext } from "@/contexts/database";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { formatCurreny, formatDate } from "@/lib/utils";
 import { Transaction } from "@/models/Transaction";
 import { Wallet } from "@/models/Wallet";
-import { formatCurreny, formatDate } from "@/utils/utils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { router, Stack } from "expo-router";
@@ -267,6 +267,9 @@ function IndexScreen() {
               </View>
               <Button onPress={() => setTransactionFormVisibility(true)}>
                 Add transaction
+              </Button>
+              <Button onPress={() => router.navigate("/test")}>
+                TEST SCREEN
               </Button>
             </View>
           </View>

@@ -1,5 +1,5 @@
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { formatDate } from "@/utils/utils";
+import { formatDate } from "@/lib/utils";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   DateTimePickerAndroid,

@@ -1,3 +1,4 @@
+import "@/global.css";
 import {
   DarkTheme,
   DefaultTheme,
@@ -5,12 +6,12 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
 
 import { DatabaseProvider } from "@/contexts/database";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { migrateDbIfNeeded } from "@/services/database";
+import { PortalHost } from "@rn-primitives/portal";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -29,6 +30,7 @@ function RootLayout() {
         <Stack screenOptions={{ contentStyle }} />
         <StatusBar style="auto" />
       </DatabaseProvider>
+      <PortalHost />
     </ThemeProvider>
   );
 }

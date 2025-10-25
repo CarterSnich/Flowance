@@ -1,3 +1,6 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export function formatCurreny(value: number) {
   return new Intl.NumberFormat("en-PH", {
     style: "currency",
@@ -15,4 +18,8 @@ export function formatDate(date: Date) {
     minute: "numeric",
     hour12: true,
   }).format(cosTypeScriptSucks);
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
