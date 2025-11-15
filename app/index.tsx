@@ -1,9 +1,8 @@
-import { Button } from "@/components/button";
 import { Pressable } from "@/components/pressable";
-import { Separator } from "@/components/separator";
-import { Text } from "@/components/text";
 import { AddTransactionModal } from "@/components/ui/add-transaction-modal";
 import AddWalletModal from "@/components/ui/add-wallet-modal";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { Colors } from "@/constants/theme";
 import { useDatabaseContext } from "@/contexts/database";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -11,19 +10,19 @@ import { formatCurreny, formatDate } from "@/lib/utils";
 import { Transaction } from "@/models/Transaction";
 import { Wallet } from "@/models/Wallet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import clsx from "clsx";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
-  RefreshControl,
-  ScrollView,
   StyleSheet,
   ToastAndroid,
   View,
   ViewToken,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function IndexScreen() {
   const Database = useDatabaseContext();
@@ -134,156 +133,81 @@ function IndexScreen() {
     getWallets();
   }, []);
 
-  return (
-    <>
-      <Stack.Screen
-        options={{
-          headerTitle: "Flowance",
-          headerRight: () => (
-            <Pressable
-              android_ripple={{ foreground: true, color: "grey" }}
-              style={{ padding: 8, alignItems: "center" }}
-              onPress={() => setWalletFormVisibility(true)}
-            >
-              <Text>Add wallet</Text>
-            </Pressable>
-          ),
-        }}
-      />
+  if (!wallets.length) {
+    return (
+      <View style={styles.containerEmpty}>
+        <MaterialCommunityIcons
+          name="wallet-bifold"
+          size={128}
+          color={textColor}
+        />
+        <Text style={{ fontSize: 24 }}>Add wallet to start</Text>
+      </View>
+    );
+  }
 
-      {wallets.length > 0 ? (
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flex: 1 }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={getWallets} />
-          }
-          nestedScrollEnabled
-        >
-          <View style={styles.container}>
-            {/* Wallets */}
-            <View>
-              <FlatList
-                data={wallets}
-                keyExtractor={({ id }) => id.toString()}
-                renderItem={({ item, index }) => (
-                  <View style={[styles.wallet, { width: screen.width }]}>
-                    <View
-                      style={[styles.walletCard, { backgroundColor: bgColor }]}
-                    >
-                      <View>
-                        <Text
-                          style={[
-                            styles.walletMediumText,
-                            { color: textColorInverted },
-                          ]}
-                        >
-                          Wallet {index + 1}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.walletSmallText,
-                            { color: textColorInverted },
-                          ]}
-                        >
-                          {item.name}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text
-                          style={[
-                            styles.walletMediumText,
-                            { color: textColorInverted },
-                          ]}
-                        >
-                          {formatCurreny(item.balance)}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.walletSmallText,
-                            { color: textColorInverted, textAlign: "right" },
-                          ]}
-                        >
-                          Balance
-                        </Text>
-                      </View>
-                    </View>
+  return (
+    <SafeAreaView className="flex-1 light:bg-zinc-300 dark:bg-zinc-900">
+      <View className="flex-1">
+        <View>
+          <FlatList
+            data={wallets}
+            keyExtractor={({ id }) => id.toString()}
+            renderItem={({ item }) => (
+              <View className="w-screen p-3 ">
+                <View className="dark:bg-neutral-950 p-5 rounded-lg flex-row justify-between">
+                  <Text>{item.name}</Text>
+                  <View>
+                    <Text className="text-right text-xl">
+                      {formatCurreny(item.balance)}
+                    </Text>
+                    <Text className="text-right text-sm">Balance</Text>
                   </View>
-                )}
-                horizontal
-                pagingEnabled
-                onViewableItemsChanged={onWalletsSwipe}
-              />
-            </View>
-            <View style={styles.content}>
-              {/* Recent transactions */}
-              <View
-                style={[
-                  styles.recentTransactions,
-                  { backgroundColor: bgColor },
-                ]}
-              >
-                <View style={styles.recentTransactionsHeader}>
-                  <Text
-                    type="defaultSemiBold"
-                    style={{ color: textColorInverted }}
-                  >
-                    Recent transactions
-                  </Text>
-                  <Pressable
-                    onPress={() => router.navigate(`/${viewingWallet?.id}`)}
-                  >
-                    <Text type="link">Show more</Text>
-                  </Pressable>
                 </View>
-                <Separator color={textColorInverted} />
-                <ScrollView nestedScrollEnabled>
-                  {recentTransactions.map((t, index) => (
-                    <Pressable
-                      key={index}
-                      style={styles.listItem}
-                      onPress={() => router.navigate(`/${t.walletID}`)}
-                    >
-                      <View style={styles.listItemTitle}>
-                        <Text
-                          type="subtitle"
-                          style={{ color: textColorInverted }}
-                        >
-                          {t.amount > 0 ? "Income" : "Expense"}
-                        </Text>
-                        <Text
-                          type="subtitle"
-                          style={{ color: textColorInverted }}
-                        >
-                          {formatCurreny(t.amount)}
-                        </Text>
-                      </View>
-                      <Text style={[{ color: textColorInverted }]}>
-                        {formatDate(t.date)}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
               </View>
-              <Button onPress={() => setTransactionFormVisibility(true)}>
-                Add transaction
-              </Button>
-              <Button onPress={() => router.navigate("/test")}>
-                TEST SCREEN
-              </Button>
-            </View>
-          </View>
-        </ScrollView>
-      ) : (
-        <View style={styles.containerEmpty}>
-          <MaterialCommunityIcons
-            name="wallet-bifold"
-            size={128}
-            color={textColor}
+            )}
+            horizontal
+            pagingEnabled
+            onViewableItemsChanged={onWalletsSwipe}
           />
-          <Text style={{ fontSize: 24 }}>Add wallet to start</Text>
         </View>
-      )}
+        <View className="flex-1 border border-dashed border-x-0">
+          {/* Recent transactions */}
+          <FlatList
+            keyExtractor={(_item, index) => index.toString()}
+            data={recentTransactions}
+            renderItem={({ item }) => (
+              <Pressable className="p-5 flex-row justify-between">
+                <View>
+                  <Text className="text-lg">
+                    {item.amount > 0 ? "Income" : "Expense"}
+                  </Text>
+                  <Text>{formatDate(item.date)}</Text>
+                </View>
+                <Text
+                  className={clsx(
+                    "text-lg",
+                    item.amount > 0 ? "text-green-700" : "text-red-700"
+                  )}
+                >
+                  {formatCurreny(item.amount)}
+                </Text>
+              </Pressable>
+            )}
+          />
+        </View>
+        <View className="p-3">
+          <Button
+            onPress={() => setTransactionFormVisibility(true)}
+            variant="outline"
+          >
+            <Text>Add transaction</Text>
+          </Button>
+          <Button onPress={() => router.navigate("/test")} variant="outline">
+            <Text>TEST SCREEN</Text>
+          </Button>
+        </View>
+      </View>
 
       <AddWalletModal
         visible={isWalletFormVisible}
@@ -296,7 +220,7 @@ function IndexScreen() {
         onSubmit={sumbmitTransaction}
         onCancel={() => setTransactionFormVisibility(false)}
       />
-    </>
+    </SafeAreaView>
   );
 }
 
