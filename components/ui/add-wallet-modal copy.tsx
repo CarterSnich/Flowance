@@ -27,8 +27,7 @@ function AddWalletModal({ visible, onSubmit, onCancel }: Props) {
           label: "Cancel",
           action: () => onCancel?.(),
         },
-      ]}
-    >
+      ]}>
       <View style={styles.form}>
         <View>
           <Text>Wallet name</Text>

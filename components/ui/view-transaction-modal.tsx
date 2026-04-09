@@ -1,6 +1,6 @@
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { formatCurreny, formatDate } from "@/lib/utils";
 import { Transaction } from "@/models/Transaction";
+import { formatCurreny, formatDate } from "@/utils/utils";
 import { StyleSheet, View } from "react-native";
 import { Modal } from "../modal";
 import { Text } from "../text";

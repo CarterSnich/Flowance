@@ -22,9 +22,6 @@
       "package": "com.cartersnich.flowance",
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "bundler": "metro"
-    },
     "plugins": [
       "expo-router",
       [
